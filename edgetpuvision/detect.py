@@ -17,6 +17,8 @@ import colorsys
 import itertools
 import time
 
+from collections import deque
+
 from edgetpu.detection.engine import DetectionEngine
 
 from . import svg
@@ -37,6 +39,8 @@ BBox.__str__ = lambda self: 'BBox(x=%.2f y=%.2f w=%.2f h=%.2f)' % self
 
 Object = collections.namedtuple('Object', ('id', 'label', 'score', 'bbox'))
 Object.__str__ = lambda self: 'Object(id=%d, label=%s, score=%.2f, %s)' % self
+
+centerPts = deque(maxlen=30) 
 
 def size_em(length):
     return '%sem' % str(0.6 * length)
@@ -82,6 +86,20 @@ def overlay(title, objs, get_color, inference_time, inference_rate, layout):
                         style='stroke:%s' % color, _class='bbox')
         doc += svg.Rect(x=x, y=y+h ,
                         width=size_em(len(caption)), height='1.2em', fill=color)
+        #center 
+        center = ((x+w/2),(y+h/2))
+        doc += svg.Circle(cx=center[0],cy=center[1],r=5, style='stroke:%s' % color)
+
+        centerPts.append(center)
+
+        for i in range(1, len(centerPts)):
+            doc += svg.Line(x1=centerPts[i-1][0],y1=centerPts[i-1][1],x2=centerPts[i][0],y2=centerPts[i][1], style='stroke:%s' % color)
+            #print(centerPts[i-1][0],centerPts[i-1][1])
+        #print(centerPts)
+
+        #corner 
+        #doc += svg.Circle(cx=x,cy=y,r=10, style='stroke:%s' % color)
+
         t = svg.Text(x=x, y=y+h, fill='black')
         t += svg.TSpan(caption, dy='1em')
         doc += t
