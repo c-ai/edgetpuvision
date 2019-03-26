@@ -1,2 +1,2 @@
 # edgetpuvision
-Google cloud edge TPU edgetpuvision package.
+Google cloud edge TPU edgetpu default package.
