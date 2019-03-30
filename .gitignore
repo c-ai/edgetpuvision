@@ -206,4 +206,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+
+# OS
+.DS_Store
 # End of https://www.gitignore.io/api/python,pycharm
